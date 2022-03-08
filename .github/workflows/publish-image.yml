@@ -7,6 +7,7 @@ on:
 env:
   DOCKERHUB_USERNAME : ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_PASSWORD : ${{ secrets.DOCKERHUB_PASSWORD }}
+  IMAGE_NAME: bilibilitoolpro
 
 jobs:
   CheckDockerToken:
@@ -52,7 +53,7 @@ jobs:
         name: GetTagName
         id: getTag
         run: |
-          DOCKER_IMAGE_TAG="zai7lou/bilibili_tool_pro:${GITHUB_REF#refs/tags/},zai7lou/bilibili_tool_pro:latest"
+          DOCKER_IMAGE_TAG="${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest"
           echo "docker image tag: $DOCKER_IMAGE_TAG"
           echo "::set-output name=tag::$DOCKER_IMAGE_TAG"
       -
@@ -63,3 +64,12 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.getTag.outputs.tag }}
+          
+      - 
+        name: Sync Readme
+        uses: ms-jpq/sync-dockerhub-readme@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          repository: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}
+          readme: "./Readme.md" 
