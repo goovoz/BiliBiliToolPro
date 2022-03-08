@@ -32,7 +32,7 @@ FROM base AS final
 WORKDIR /app
 ENV TIME_ZONE=Asia/Shanghai
 COPY --from=publish /app/publish .
-COPY ./docker/entry.sh ./docker/crontab /app/
+COPY ./docker/entry.sh ./docker/crontab /app/ 
 RUN ln -fs /usr/share/zoneinfo/$TIME_ZONE /etc/localtime \
     && echo $TIME_ZONE > /etc/timezone
 RUN cp /etc/apt/sources.list /etc/apt/sources.list.bak \
@@ -43,5 +43,6 @@ RUN apt-get update \
     && apt-get install -y cron tzdata tofrodos \
     && apt-get clean
 RUN fromdos /app/entry.sh \
-    && fromdos /app/crontab
+    && fromdos /app/crontab \
+    && chmod 777 /app/entry.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entry.sh"]
