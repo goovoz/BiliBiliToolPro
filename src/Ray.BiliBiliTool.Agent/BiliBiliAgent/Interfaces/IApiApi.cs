@@ -368,7 +368,7 @@ public interface IApiApi
     [Headers("Referer: https://big.bilibili.com/mobile/bigPoint/task")]
     [Post("/pgc/activity/score/task/receive/v2")]
     Task<BiliApiResponse> VipBigPointReceiveV2(
-        [Body(BodySerializationMethod.UrlEncoded)] ReceiveOrCompleteTaskRequest request,
+        [Body(BodySerializationMethod.UrlEncoded)] ReceiveOrCompleteTaskAppRequest request,
         [Header("Cookie")] string ck
     );
 

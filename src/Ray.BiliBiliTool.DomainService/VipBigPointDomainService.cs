@@ -269,7 +269,7 @@ public class VipBigPointDomainService(
         BiliApiResponse? re = null;
         try
         {
-            var request = new ReceiveOrCompleteTaskRequest(taskCode);
+            var request = new ReceiveOrCompleteTaskAppRequest(taskCode);
             re = await apiApi.VipBigPointReceiveV2(request, ck.ToString());
             if (re.Code == 0)
                 logger.LogInformation("领取任务成功");
