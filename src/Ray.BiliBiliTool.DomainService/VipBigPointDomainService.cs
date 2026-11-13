@@ -259,6 +259,52 @@ public class VipBigPointDomainService(
         return false;
     }
 
+    /// <summary>
+    /// 完整观看剧集任务流程（ogvwatchnew）：
+    /// material/receive 领取观看实例（task_id + token + 倒计时）→
+    /// 等满倒计时 → deliver/task/complete 带签名上报。
+    /// 上报接口同一 token 只能成功一次，倒计时不满足会被服务端拒绝。
+    /// </summary>
+    public async Task<bool> CompleteOgvWatchFlowAsync(BiliCookie ck)
+    {
+        logger.LogInformation("开始观看剧集：获取观看实例");
+        var start = await apiApi.StartOgvWatchAsync(new StartOgvWatchRequest(), ck.ToString());
+        if (
+            start.Code != 0
+            || start.Data is null
+            || start.Data.EffectiveTaskId == 0
+            || string.IsNullOrEmpty(start.Data.EffectiveToken)
+        )
+        {
+            logger.LogInformation("开始观看剧集失败：{msg}", start.ToJsonStr());
+            return false;
+        }
+
+        long taskId = start.Data.EffectiveTaskId;
+        string token = start.Data.EffectiveToken!;
+        long showMs = start.Data.WatchMilliseconds;
+        logger.LogInformation(
+            "观看实例已领取：task_id={taskId}，倒计时 {minutes} 分钟",
+            taskId,
+            showMs / 60000
+        );
+
+        await Task.Delay((int)showMs + 15 * 1000);
+
+        var complete = await apiApi.CompleteOgvWatchAsync(
+            new CompleteOgvWatchRequest(taskId, token, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+            ck.ToString()
+        );
+        if (complete.Code != 0)
+        {
+            logger.LogInformation("上报观看剧集完成失败：{msg}", complete.ToJsonStr());
+            return false;
+        }
+
+        logger.LogInformation("上报完成成功");
+        return true;
+    }
+
     #region private
 
     /// <summary>

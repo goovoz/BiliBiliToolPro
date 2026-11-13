@@ -5,7 +5,7 @@ public class BaseAppRequest
     // public string access_key { get; set; }
     // public string appkey { get; set; }
 
-    public string build { get; } = "8451100";
+    public string build { get; } = "9190400";
 
     public int disable_rcmd { get; } = 0;
 
@@ -14,7 +14,7 @@ public class BaseAppRequest
     public string platform { get; } = "android";
 
     public string statistics { get; } =
-        "{\"appId\":1,\"platform\":3,\"version\":\"8.45.1\",\"abtest\":\"\"}";
+        "{\"appId\":1,\"platform\":3,\"version\":\"9.19.0\",\"abtest\":\"\"}";
 
     /// <summary>
     /// 当前时间（毫秒）

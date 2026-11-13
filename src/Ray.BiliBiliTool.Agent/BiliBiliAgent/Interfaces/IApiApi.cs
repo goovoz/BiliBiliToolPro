@@ -411,20 +411,22 @@ public interface IApiApi
     );
 
     /// <summary>
-    /// 开始观看剧集任务
-    /// NOTE: HTTP verb unknown — stub method without Refit verb attribute
+    /// 开始观看剧集任务（返回 task_id + token 与观看倒计时）
     /// </summary>
+    [Headers("Referer: https://big.bilibili.com/mobile/bigPoint/task")]
+    [Post("/pgc/activity/deliver/material/receive")]
     Task<BiliApiResponse<StartOgvWatchResponse>> StartOgvWatchAsync(
-        StartOgvWatchRequest request,
+        [Body(BodySerializationMethod.UrlEncoded)] StartOgvWatchRequest request,
         [Header("Cookie")] string ck
     );
 
     /// <summary>
-    /// 完成观看剧集任务
-    /// NOTE: HTTP verb unknown — stub method without Refit verb attribute
+    /// 上报完成观看剧集任务（需 task_sign + sign，同一 token 只能成功一次）
     /// </summary>
+    [Headers("Referer: https://big.bilibili.com/mobile/bigPoint/task")]
+    [Post("/pgc/activity/deliver/task/complete")]
     Task<BiliApiResponse> CompleteOgvWatchAsync(
-        CompleteOgvWatchRequest request,
+        [Body(BodySerializationMethod.UrlEncoded)] CompleteOgvWatchRequest request,
         [Header("Cookie")] string ck
     );
 
